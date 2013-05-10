@@ -49,7 +49,12 @@ class CCUser extends CObject implements IController {
   /**
    * Change the password.
    */
-  public function DoChangePassword($form) {
+  public function DoChangePassword($form = "") {
+  if (empty($form)) {
+      $this->AddMessage('notice', 'Failed to update password.');
+      $this->RedirectToController('profile');
+      return;
+    }
     if($form['password']['value'] != $form['password1']['value'] || empty($form['password']['value']) || empty($form['password1']['value'])) {
       $this->AddMessage('error', 'Password does not match or is empty.');
     } else {
@@ -63,7 +68,12 @@ class CCUser extends CObject implements IController {
   /**
    * Save updates to profile information.
    */
-  public function DoProfileSave($form) {
+  public function DoProfileSave($form = "") {
+    if (empty($form)) {
+      $this->AddMessage('notice', 'Failed saving profile.');
+      $this->RedirectToController('profile');
+      return;
+    }
     $this->user['name'] = $form['name']['value'];
     $this->user['email'] = $form['email']['value'];
     $ret = $this->user->Save();
@@ -93,7 +103,12 @@ class CCUser extends CObject implements IController {
   /**
    * Perform a login of the user as callback on a submitted form.
    */
-  public function DoLogin($form) {
+  public function DoLogin($form = "") {
+    if (empty($form)) {
+      $this->AddMessage('notice', "Failed to login, user does not exist or password does not match.");
+      $this->RedirectToController('login');
+      return;
+    }
     if($this->user->Login($form['acronym']['value'], $form['password']['value'])) {
       $this->AddMessage('success', "Welcome {$this->user['name']}.");
       $this->RedirectToController('profile');
@@ -132,7 +147,12 @@ class CCUser extends CObject implements IController {
    *
    * @param $form CForm the form that was submitted
    */
-  public function DoCreate($form) {    
+  public function DoCreate($form = "") {
+    if (empty($form)) {
+      $this->AddMessage('notice', "Failed to create an account.");
+      $this->RedirectToController('create');
+      return;
+    }    
     if($form['password']['value'] != $form['password1']['value'] || empty($form['password']['value']) || empty($form['password1']['value'])) {
       $this->AddMessage('error', 'Password does not match or is empty.');
       $this->RedirectToController('create');
